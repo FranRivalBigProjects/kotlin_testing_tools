@@ -1,111 +1,1366 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Kotlin Testing Tools – Unit Tests, Mocks & Flow Testing</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<meta name="robots" content="index, follow">
 
-  <!-- Google verification -->
-  <meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<title>Kotlin Testing – Unit Test Guide, JUnit5, MockK &amp; Kotest Reference</title>
 
-  <!-- SEO -->
-  <meta name="description" content="Kotlin testing tools for generating unit tests, mocking dependencies, and analyzing Flow behavior in Kotlin applications.">
-  <meta name="keywords" content="kotlin testing tools, kotlin unit test generator, kotlin mock generator, kotlin flow testing example, kotlin test flow analyzer">
+<meta name="description" content="Complete Kotlin testing reference. Learn kotlin test frameworks, kotlin unit testing with JUnit5 and Kotest, mocking with MockK, and testing coroutines. Includes an inline unit test generator. Free, no install.">
 
-  <!-- AdSense -->
-  <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
+<meta name="keywords" content="kotlin test, kotlin testing, kotlin unit testing, kotlin test framework, kotlin unit test, unit test kotlin, test kotlin, kotlin tests, kotlin junit5, kotlin mockk, kotlin kotest, kotlin coroutines testing">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Kotlin Testing Tools – Unit Testing & Mocking">
-  <meta property="og:description" content="Generate tests, mock dependencies, and analyze Flow behavior in Kotlin.">
-  <meta property="og:type" content="website">
+<link rel="canonical" href="https://franrivalbigprojects.github.io/kotlin-testing-tools/">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #020617;
-      color: #e2e8f0;
-      margin: 0;
-      padding: 40px;
+<meta property="og:title" content="Kotlin Testing – Unit Test Guide, JUnit5, MockK and Kotest Reference">
+<meta property="og:description" content="Kotlin test frameworks, unit testing patterns, MockK mocking, coroutine testing, and an inline unit test generator. Free developer reference.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #030a06;
+  --surface: #060f09;
+  --surface2: #0a1610;
+  --border: #0e1f14;
+  --border2: #152d1c;
+  --kotlin: #7f52ff;
+  --kotlin-dim: rgba(127,82,255,0.1);
+  --kotlin-dim2: rgba(127,82,255,0.05);
+  --green: #4ade80;
+  --green-dim: rgba(74,222,128,0.1);
+  --green-dim2: rgba(74,222,128,0.05);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.08);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.08);
+  --yellow: #fbbf24;
+  --yellow-dim: rgba(251,191,36,0.08);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.08);
+  --text: #b8d4c0;
+  --text-muted: #3a5a48;
+  --text-dim: #0f2018;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --r: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  border-bottom: 1px solid var(--border2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(3,10,6,0.96);
+  backdrop-filter: blur(12px);
+}
+
+.header-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kotlin);
+  background: var(--kotlin-dim2);
+  border: 1px solid rgba(127,82,255,0.3);
+  border-radius: 3px;
+  padding: 3px 9px;
+}
+
+.logo-text {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.logo-text strong { color: var(--green); font-weight: 500; }
+
+.wrapper {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* HERO */
+.hero {
+  padding: 48px 0 36px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 30px;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+  opacity: 0.8;
+}
+
+h1 {
+  font-size: clamp(21px, 3.2vw, 30px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 em { font-style: normal; color: var(--green); }
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 600px;
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+
+.hero-sub strong { color: var(--text); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.pill-green  { color: var(--green);  background: var(--green-dim2);  border-color: rgba(74,222,128,0.3); }
+.pill-kotlin { color: var(--kotlin); background: var(--kotlin-dim2); border-color: rgba(127,82,255,0.3); }
+.pill-dim    { color: var(--text-muted); border-color: var(--border2); }
+
+/* SECTION */
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sec-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--green);
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.sec-rule { flex: 1; height: 1px; background: var(--border2); }
+
+.content-section { margin-bottom: 50px; }
+
+/* PROSE */
+p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+p strong { color: var(--text); }
+
+code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--surface2);
+  color: var(--green);
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+}
+
+/* CODE BLOCK */
+.code-block {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--green);
+  border-radius: 5px;
+  padding: 16px 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 14px 0;
+  color: var(--text-muted);
+}
+
+.ck  { color: var(--kotlin); }
+.cf  { color: var(--blue); }
+.cs  { color: var(--green); }
+.cm  { color: var(--text-dim); }
+.ct  { color: var(--orange); }
+.ca  { color: var(--yellow); }
+
+/* FRAMEWORK CARDS */
+.framework-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.fw-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  transition: border-color 0.15s;
+}
+
+.fw-card:hover { border-color: rgba(74,222,128,0.25); }
+
+.fw-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.fw-name {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.fw-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.b-green  { color: var(--green);  background: var(--green-dim2);  border-color: rgba(74,222,128,0.25); }
+.b-kotlin { color: var(--kotlin); background: var(--kotlin-dim2); border-color: rgba(127,82,255,0.25); }
+.b-blue   { color: var(--blue);   background: var(--blue-dim);    border-color: rgba(96,165,250,0.25); }
+.b-orange { color: var(--orange); background: var(--orange-dim);  border-color: rgba(251,146,60,0.25); }
+
+.fw-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 8px;
+}
+
+.fw-when {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* COMPARISON TABLE */
+.cmp-table {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.cmp-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border2);
+}
+
+.cmp-row:last-child { border-bottom: none; }
+.cmp-row.cmp-head { background: var(--surface2); }
+
+.cmp-cell {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+}
+
+.cmp-cell:last-child { border-right: none; }
+.cmp-head .cmp-cell {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* UNIT TEST GENERATOR TOOL */
+.tool-shell {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tool-topbar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topbar-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.btn-sm {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: opacity 0.15s;
+}
+
+.btn-sm:hover { opacity: 0.75; }
+.btn-green { background: var(--green-dim2); color: var(--green); border-color: rgba(74,222,128,0.25); }
+.btn-ghost { background: transparent; color: var(--text-muted); border-color: var(--border2); }
+
+.gen-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 420px;
+}
+
+.gen-left {
+  border-right: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-head {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border2);
+  background: var(--surface2);
+  display: flex;
+  justify-content: space-between;
+}
+
+.kotlin-textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 360px;
+  padding: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.65;
+  background: var(--bg);
+  border: none;
+  color: var(--text);
+  resize: none;
+  tab-size: 4;
+}
+
+.kotlin-textarea:focus { outline: none; }
+
+.gen-right { display: flex; flex-direction: column; }
+
+.gen-options {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--surface2);
+  align-items: center;
+}
+
+.opt-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 4px;
+}
+
+.opt-select {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 5px 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  -webkit-appearance: none;
+}
+
+.opt-select:focus { outline: none; }
+.opt-select option { background: #0a1610; }
+
+#outputArea {
+  flex: 1;
+  padding: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow: auto;
+  color: var(--text-muted);
+  background: var(--bg);
+  min-height: 360px;
+}
+
+.gen-bar {
+  padding: 12px 18px;
+  background: var(--surface2);
+  border-top: 1px solid var(--border2);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-generate {
+  padding: 10px 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: opacity 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 18px rgba(74,222,128,0.22);
+}
+
+.btn-generate:hover { opacity: 0.87; box-shadow: 0 0 26px rgba(74,222,128,0.38); }
+
+.copy-btn {
+  padding: 9px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--kotlin-dim2);
+  color: var(--kotlin);
+  border: 1px solid rgba(127,82,255,0.25);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.copy-btn:hover { opacity: 0.75; }
+
+/* DENSE BLOCK */
+.dense-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 22px;
+  margin-top: 14px;
+}
+
+.dense-block p {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.dense-block p:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+/* FAQ */
+.faq-list {
+  margin-top: 14px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.faq-item { border-bottom: 1px solid var(--border2); }
+.faq-item:last-child { border-bottom: none; }
+
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: none;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  font-family: var(--sans);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s;
+}
+
+.faq-q:hover { background: var(--green-dim2); }
+.faq-arrow { font-family: var(--mono); font-size: 11px; color: var(--text-dim); transition: transform 0.2s; flex-shrink: 0; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+.faq-a {
+  display: none;
+  padding: 0 18px 13px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  border-top: 1px solid var(--border2);
+  background: var(--bg);
+}
+
+.faq-item.open .faq-a { display: block; }
+.faq-a code { font-family: var(--mono); font-size: 11px; color: var(--green); background: var(--green-dim2); border-radius: 3px; padding: 1px 5px; }
+
+/* TOOLS GRID */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.otl {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.15s;
+}
+
+.otl:hover { border-color: rgba(74,222,128,0.3); }
+.otl-eye  { font-family: var(--mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.otl-name { font-family: var(--mono); font-size: 12px; color: var(--green); font-weight: 500; }
+
+/* TAG CLOUD */
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 50px; }
+
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 4px 12px;
+  cursor: default;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tag:hover { color: var(--green); border-color: rgba(74,222,128,0.3); }
+
+hr.divider { border: none; border-top: 1px solid var(--border2); margin: 48px 0; }
+
+footer { border-top: 1px solid var(--border2); padding: 20px 0; position: relative; z-index: 1; }
+
+.footer-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+footer p { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin: 0; }
+
+@media (max-width: 680px) {
+  .gen-layout { grid-template-columns: 1fr; }
+  .gen-left { border-right: none; border-bottom: 1px solid var(--border2); }
+  .framework-grid { grid-template-columns: 1fr; }
+  .cmp-row { grid-template-columns: 100px repeat(3, 1fr); font-size: 11px; }
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Kotlin Testing – Unit Test Guide, JUnit5, MockK and Kotest Reference",
+  "description": "Complete Kotlin testing reference covering kotlin-test, JUnit5, Kotest, MockK, and coroutines testing. Includes patterns, code examples, framework comparison, and a unit test generator.",
+  "keywords": "kotlin test, kotlin testing, kotlin unit testing, kotlin test framework, kotlin unit test, kotest, mockk, junit5 kotlin"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the kotlin-test library?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "kotlin-test is the official Kotlin multiplatform testing library by JetBrains. It provides assertion functions (assertEquals, assertTrue, assertNotNull, assertFails) and test annotations that work across JVM, JS, and Native targets. On JVM, it integrates with JUnit4, JUnit5, or TestNG as the underlying test runner. Add it with testImplementation(kotlin('test')) in build.gradle.kts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best Kotlin test framework?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For most Kotlin projects: JUnit5 + kotlin-test for straightforward unit tests, MockK for mocking (Kotlin-native mock library), and kotlinx-coroutines-test for testing suspend functions. Kotest is a strong alternative if you prefer expressive spec-style tests with property-based testing. On Android, use JUnit4 or JUnit5 with Robolectric or Espresso for UI tests."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you write a unit test in Kotlin with JUnit5?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Add testImplementation(kotlin('test')) to build.gradle.kts. Create a class in src/test/kotlin, annotate test functions with @Test, and use assertEquals, assertTrue, assertNotNull from kotlin.test. Example: @Test fun testAdd() { assertEquals(4, calculator.add(2, 2)) }. JUnit5 is the default test runner on JVM in recent Kotlin projects."
+      }
     }
-    h1 {
-      color: #4ade80;
-    }
-    p {
-      max-width: 950px;
-      line-height: 1.6;
-    }
-    .tools {
-      margin-top: 30px;
-    }
-    .tool {
-      background: #1e293b;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      transition: 0.2s;
-    }
-    .tool:hover {
-      background: #334155;
-    }
-    a {
-      color: #22c55e;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  ]
+}
+</script>
+
 </head>
+
 <body>
 
-  <h1>Kotlin Testing Tools</h1>
+<header>
+  <div class="header-inner">
+    <span class="logo-pill">KT</span>
+    <span class="logo-text"><strong>kotlin</strong>-testing-tools</span>
+  </div>
+</header>
 
-  <p>
-    A collection of tools for testing Kotlin applications. Generate unit tests,
-    mock dependencies, and analyze Flow-based asynchronous behavior
-    in modern Kotlin projects.
-  </p>
+<div class="wrapper">
 
-  <p>
-    These tools help developers ensure code quality, improve reliability,
-    and debug complex test scenarios in Kotlin environments.
-  </p>
+  <!-- HERO -->
 
-  <div class="tools">
+  <section class="hero">
+    <p class="hero-eyebrow">// Kotlin Testing Reference &amp; Tools</p>
+    <h1><em>Kotlin Testing</em> — Unit Tests,<br>Frameworks &amp; Patterns</h1>
+    <p class="hero-sub">
+      Complete reference for <strong>kotlin test</strong> frameworks, unit testing patterns with JUnit5 and Kotest, mocking with MockK, and testing Kotlin coroutines. Includes an inline unit test generator.
+    </p>
+    <div class="pill-row">
+      <span class="pill pill-green">kotlin-test</span>
+      <span class="pill pill-green">JUnit5</span>
+      <span class="pill pill-kotlin">Kotest</span>
+      <span class="pill pill-dim">MockK</span>
+      <span class="pill pill-dim">Coroutines</span>
+      <span class="pill pill-dim">Free &middot; No install</span>
+    </div>
+  </section>
 
-    <div class="tool"><a href="./kotlin_mock_generator/">Mock Generator</a></div>
-    <div class="tool"><a href="./kotlin_test_flow_analyzer/">Flow Test Analyzer</a></div>
-    <div class="tool"><a href="./kotlin_unit_test_generator/">Unit Test Generator</a></div>
+  <!-- KOTLIN-TEST OVERVIEW -->
 
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">What is kotlin-test</span>
+      <span class="sec-rule"></span>
+    </div>
+
+
+<p>
+  <strong>kotlin-test</strong> is the official Kotlin multiplatform testing library. It provides assertion functions and test annotations that work across JVM, JS, and Native targets. On JVM it integrates with JUnit4, JUnit5, or TestNG as the underlying runner. Add it with a single dependency:
+</p>
+
+<div class="code-block"><span class="cm">// build.gradle.kts</span>
+
+
+<span class="ct">dependencies</span> {
+<span class="cf">testImplementation</span>(<span class="ck">kotlin</span>(<span class="cs">“test”</span>))
+}
+
+<span class="cm">// The simplest Kotlin unit test</span>
+<span class="ck">import</span> kotlin.test.*
+
+<span class="ck">class</span> <span class="ct">CalculatorTest</span> {
+
+
+<span class="ca">@Test</span>
+<span class="ck">fun</span> <span class="cf">testAddition</span>() {
+    <span class="cf">assertEquals</span>(<span class="cs">4</span>, Calculator().<span class="cf">add</span>(<span class="cs">2</span>, <span class="cs">2</span>))
+}
+
+<span class="ca">@Test</span>
+<span class="ck">fun</span> <span class="cf">testDivisionByZero</span>() {
+    <span class="cf">assertFails</span> { Calculator().<span class="cf">divide</span>(<span class="cs">10</span>, <span class="cs">0</span>) }
+}
+
+
+}</div>
+
+
+<p>
+  kotlin-test assertions — <code>assertEquals</code>, <code>assertNotNull</code>, <code>assertTrue</code>, <code>assertFails</code>, <code>assertFailsWith</code>, <code>expect</code> — are available across all Kotlin targets without importing a JVM-specific library.
+</p>
+
+
+  </section>
+
+  <!-- KOTLIN TEST GENERATOR TOOL -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Unit Test Generator</span>
+      <span class="sec-rule"></span>
+    </div>
+
+
+<div class="tool-shell">
+  <div class="tool-topbar">
+    <span class="topbar-label">// Kotlin Unit Test Generator</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-sm btn-green" onclick="loadSample()">Load Sample</button>
+      <button class="btn-sm btn-ghost" onclick="clearGen()">Clear</button>
+    </div>
   </div>
 
-  <!-- SEO LONG TAIL -->
-  <h2>Common Kotlin Testing Queries</h2>
+  <div class="gen-layout">
+    <div class="gen-left">
+      <div class="panel-head">
+        <span>// Paste Kotlin class or function</span>
+        <span id="lineInfo">0 lines</span>
+      </div>
+      <textarea class="kotlin-textarea" id="kotlinInput" oninput="onInputChange()" spellcheck="false" placeholder="// Paste a Kotlin class or function here...
 
-  <ul>
-    <li>how to write unit tests in kotlin example</li>
-    <li>mock dependencies kotlin test step by step</li>
-    <li>kotlin flow testing example coroutine test</li>
-    <li>best kotlin testing libraries junit mockk</li>
-    <li>how to test suspend function kotlin unit test</li>
-    <li>kotlin coroutine test dispatcher explained</li>
-    <li>common kotlin testing errors and fixes</li>
-  </ul>
 
-  <p>
-    These tools are ideal for backend developers, Android engineers,
-    and QA teams working with Kotlin applications.
-  </p>
+// The generator will produce a JUnit5 + kotlin-test
+// unit test skeleton from your code.”></textarea>
+</div>
 
-  <!-- snippet SEO -->
-  <pre>
-@Test
-fun testSum() {
-  assertEquals(4, sum(2, 2))
+
+    <div class="gen-right">
+      <div class="gen-options">
+        <span class="opt-label">Framework</span>
+        <select class="opt-select" id="frameworkSelect">
+          <option value="junit5">JUnit5 + kotlin-test</option>
+          <option value="kotest">Kotest (StringSpec)</option>
+          <option value="mockk">JUnit5 + MockK</option>
+        </select>
+      </div>
+      <div class="panel-head">
+        <span>// Generated test</span>
+      </div>
+      <pre id="outputArea">// Generated test will appear here.
+
+
+// Paste a Kotlin class and click Generate.</pre>
+</div>
+</div>
+
+
+  <div class="gen-bar">
+    <button class="btn-generate" onclick="generateTest()">Generate Test</button>
+    <button class="copy-btn" onclick="copyOutput()">Copy</button>
+    <span id="copyFb" style="font-family:var(--mono);font-size:11px;color:var(--green);display:none;">Copied!</span>
+  </div>
+</div>
+
+
+  </section>
+
+  <hr class="divider">
+
+  <!-- KOTLIN TEST FRAMEWORKS -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Kotlin Test Frameworks</span>
+      <span class="sec-rule"></span>
+    </div>
+
+
+<div class="framework-grid">
+
+  <div class="fw-card">
+    <div class="fw-head">
+      <span class="fw-name">kotlin-test + JUnit5</span>
+      <span class="fw-badge b-green">Recommended</span>
+    </div>
+    <p class="fw-desc">The official Kotlin testing library paired with JUnit5 as the runner. Uses <code>@Test</code>, <code>assertEquals</code>, <code>assertNotNull</code> from <code>kotlin.test</code>. Multiplatform compatible. Zero extra configuration in recent Kotlin versions.</p>
+    <p class="fw-when">Best for: most Kotlin JVM and multiplatform projects.</p>
+  </div>
+
+  <div class="fw-card">
+    <div class="fw-head">
+      <span class="fw-name">Kotest</span>
+      <span class="fw-badge b-kotlin">Popular</span>
+    </div>
+    <p class="fw-desc">Feature-rich Kotlin-native test framework with multiple spec styles (StringSpec, BehaviorSpec, DescribeSpec), property-based testing via <code>Kotest Property</code>, and powerful matchers. Integrates with Kotlin coroutines natively.</p>
+    <p class="fw-when">Best for: teams that prefer expressive spec-style tests or need property-based testing.</p>
+  </div>
+
+  <div class="fw-card">
+    <div class="fw-head">
+      <span class="fw-name">MockK</span>
+      <span class="fw-badge b-blue">Mocking</span>
+    </div>
+    <p class="fw-desc">Kotlin-native mocking library. Supports mocking <code>suspend</code> functions, coroutines, companion objects, and final classes — all impossible with Mockito in Kotlin. Uses <code>mockk()</code>, <code>every { }</code>, <code>verify { }</code> DSL.</p>
+    <p class="fw-when">Best for: mocking dependencies in any Kotlin test. Preferred over Mockito for Kotlin.</p>
+  </div>
+
+  <div class="fw-card">
+    <div class="fw-head">
+      <span class="fw-name">kotlinx-coroutines-test</span>
+      <span class="fw-badge b-orange">Coroutines</span>
+    </div>
+    <p class="fw-desc">Official library for testing Kotlin coroutines. Provides <code>runTest</code> (replaces <code>runBlocking</code> for tests), <code>TestCoroutineScheduler</code>, and <code>advanceTimeBy</code> to control virtual time. Essential for testing <code>suspend</code> functions and Flows.</p>
+    <p class="fw-when">Best for: any code using coroutines, Flow, or delay-based logic.</p>
+  </div>
+
+</div>
+
+<!-- Comparison table -->
+<div class="cmp-table">
+  <div class="cmp-row cmp-head">
+    <div class="cmp-cell">Feature</div>
+    <div class="cmp-cell">kotlin-test / JUnit5</div>
+    <div class="cmp-cell">Kotest</div>
+    <div class="cmp-cell">MockK</div>
+  </div>
+  <div class="cmp-row">
+    <div class="cmp-cell" style="color:var(--text-muted);">Kotlin-native</div>
+    <div class="cmp-cell"><span class="fw-badge b-green">Yes</span></div>
+    <div class="cmp-cell"><span class="fw-badge b-green">Yes</span></div>
+    <div class="cmp-cell"><span class="fw-badge b-green">Yes</span></div>
+  </div>
+  <div class="cmp-row">
+    <div class="cmp-cell" style="color:var(--text-muted);">Coroutine support</div>
+    <div class="cmp-cell">Via coroutines-test</div>
+    <div class="cmp-cell">Built-in</div>
+    <div class="cmp-cell">mockk suspend fns</div>
+  </div>
+  <div class="cmp-row">
+    <div class="cmp-cell" style="color:var(--text-muted);">Multiplatform</div>
+    <div class="cmp-cell"><span class="fw-badge b-green">Yes</span></div>
+    <div class="cmp-cell"><span class="fw-badge b-green">Yes</span></div>
+    <div class="cmp-cell">JVM only</div>
+  </div>
+  <div class="cmp-row">
+    <div class="cmp-cell" style="color:var(--text-muted);">Mock final classes</div>
+    <div class="cmp-cell">N/A (not a mock lib)</div>
+    <div class="cmp-cell">N/A (not a mock lib)</div>
+    <div class="cmp-cell"><span class="fw-badge b-green">Yes</span></div>
+  </div>
+  <div class="cmp-row">
+    <div class="cmp-cell" style="color:var(--text-muted);">Property testing</div>
+    <div class="cmp-cell">No</div>
+    <div class="cmp-cell"><span class="fw-badge b-green">Built-in</span></div>
+    <div class="cmp-cell">N/A</div>
+  </div>
+</div>
+
+  </section>
+
+  <!-- MOCKK PATTERNS -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Kotlin MockK Patterns</span>
+      <span class="sec-rule"></span>
+    </div>
+
+
+<p><strong>MockK</strong> is the standard mocking library for Kotlin. It handles Kotlin-specific features that Mockito cannot — final classes, suspend functions, extension functions, and coroutines.</p>
+
+<div class="code-block"><span class="ck">import</span> io.mockk.*
+
+
+<span class="ck">import</span> kotlin.test.*
+
+<span class="cm">// Basic mock and stub</span>
+<span class="ca">@Test</span>
+<span class="ck">fun</span> <span class="cf">testUserService</span>() {
+<span class="ck">val</span> repo = <span class="cf">mockk</span><<span class="ct">UserRepository</span>>()
+<span class="ck">val</span> service = <span class="ct">UserService</span>(repo)
+
+
+<span class="cf">every</span> { repo.<span class="cf">findById</span>(<span class="cs">1</span>) } returns <span class="ct">User</span>(<span class="cs">1</span>, <span class="cs">"Alice"</span>)
+
+<span class="ck">val</span> result = service.<span class="cf">getUser</span>(<span class="cs">1</span>)
+
+<span class="cf">assertEquals</span>(<span class="cs">"Alice"</span>, result.name)
+<span class="cf">verify</span>(exactly = <span class="cs">1</span>) { repo.<span class="cf">findById</span>(<span class="cs">1</span>) }
+
+
 }
-  </pre>
+
+<span class="cm">// Mocking suspend functions (impossible with Mockito)</span>
+<span class="ca">@Test</span>
+<span class="ck">fun</span> <span class="cf">testSuspendMock</span>() = runTest {
+<span class="ck">val</span> repo = <span class="cf">mockk</span><<span class="ct">UserRepository</span>>()
+
+
+<span class="cf">coEvery</span> { repo.<span class="cf">findByIdSuspend</span>(<span class="cs">1</span>) } returns <span class="ct">User</span>(<span class="cs">1</span>, <span class="cs">"Bob"</span>)
+
+<span class="ck">val</span> result = repo.<span class="cf">findByIdSuspend</span>(<span class="cs">1</span>)
+<span class="cf">assertEquals</span>(<span class="cs">"Bob"</span>, result.name)
+
+<span class="cf">coVerify</span> { repo.<span class="cf">findByIdSuspend</span>(<span class="cs">1</span>) }
+
+
+}</div>
+
+  </section>
+
+  <!-- COROUTINES TESTING -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Testing Kotlin Coroutines</span>
+      <span class="sec-rule"></span>
+    </div>
+
+
+<p>Testing <code>suspend</code> functions and <code>Flow</code> requires <code>kotlinx-coroutines-test</code>. The key is <code>runTest</code> — it replaces <code>runBlocking</code> in tests and provides virtual time control so delays don't actually wait.</p>
+
+<div class="code-block"><span class="cm">// testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")</span>
+
+
+<span class="ck">import</span> kotlinx.coroutines.test.*
+<span class="ck">import</span> kotlinx.coroutines.flow.*
+<span class="ck">import</span> kotlin.test.*
+
+<span class="cm">// Test a suspend function</span>
+<span class="ca">@Test</span>
+<span class="ck">fun</span> <span class="cf">testSuspendFunction</span>() = <span class="cf">runTest</span> {
+<span class="ck">val</span> result = <span class="cf">fetchUserAsync</span>(<span class="cs">1</span>)   <span class="cm">// suspend fn</span>
+<span class="cf">assertNotNull</span>(result)
+<span class="cf">assertEquals</span>(<span class="cs">“Alice”</span>, result.name)
+}
+
+<span class="cm">// Control virtual time for delays</span>
+<span class="ca">@Test</span>
+<span class="ck">fun</span> <span class="cf">testWithDelay</span>() = <span class="cf">runTest</span> {
+<span class="ck">var</span> called = <span class="cs">false</span>
+<span class="cf">launch</span> {
+<span class="cf">delay</span>(<span class="cs">1_000</span>)
+called = <span class="cs">true</span>
+}
+<span class="cf">advanceTimeBy</span>(<span class="cs">1_001</span>)   <span class="cm">// no actual waiting</span>
+<span class="cf">assertTrue</span>(called)
+}
+
+<span class="cm">// Collect a Flow in tests</span>
+<span class="ca">@Test</span>
+<span class="ck">fun</span> <span class="cf">testFlow</span>() = <span class="cf">runTest</span> {
+<span class="ck">val</span> values = <span class="cf">flowOf</span>(<span class="cs">1</span>, <span class="cs">2</span>, <span class="cs">3</span>).<span class="cf">toList</span>()
+<span class="cf">assertEquals</span>(<span class="cf">listOf</span>(<span class="cs">1</span>, <span class="cs">2</span>, <span class="cs">3</span>), values)
+}</div>
+
+
+<div class="dense-block">
+  <p><strong>runTest vs runBlocking in Kotlin tests</strong><br>
+  Use <code>runTest</code> from <code>kotlinx-coroutines-test</code> — not <code>runBlocking</code> — when testing coroutines. <code>runBlocking</code> blocks the thread and makes <code>delay()</code> wait in real time. <code>runTest</code> uses a virtual clock so delays advance instantly, and it also checks for uncaught exceptions from child coroutines. Available since <code>kotlinx-coroutines-test 1.6.0</code>.</p>
+  <p><strong>Testing StateFlow and SharedFlow</strong><br>
+  Use <code>Turbine</code> — a dedicated Kotlin Flow testing library — for asserting sequences of emissions from StateFlow and SharedFlow. <code>flow.test { assertEquals(1, awaitItem()); awaitComplete() }</code>. Without Turbine, use <code>toList()</code> for cold flows and <code>stateIn</code> with <code>SharingStarted.Eagerly</code> for hot flows in tests.</p>
+  <p><strong>TestCoroutineScheduler and TestDispatcher</strong><br>
+  <code>runTest</code> uses a <code>TestCoroutineScheduler</code> internally. Inject a <code>TestDispatcher</code> into your classes under test so you can control which dispatcher runs: <code>class UserViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.IO)</code>. In tests, pass <code>UnconfinedTestDispatcher()</code> or <code>StandardTestDispatcher()</code>.</p>
+</div>
+
+
+  </section>
+
+  <!-- FAQ -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">FAQ — Kotlin Testing</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What is kotlin-test?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">kotlin-test is the official Kotlin multiplatform testing library. It provides <code>@Test</code>, <code>assertEquals</code>, <code>assertNotNull</code>, <code>assertTrue</code>, <code>assertFails</code>, and <code>assertFailsWith</code> that work on JVM, JS, and Kotlin/Native. Add with <code>testImplementation(kotlin("test"))</code>. On JVM it delegates to JUnit5 by default in recent Gradle versions.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What is the best Kotlin test framework?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">For most projects: <strong>kotlin-test + JUnit5</strong> for assertions and test runner, <strong>MockK</strong> for mocking, and <strong>kotlinx-coroutines-test</strong> for suspend function testing. <strong>Kotest</strong> is a strong alternative for spec-style tests and property-based testing. Avoid Mockito for Kotlin — MockK handles final classes and suspend functions that Mockito cannot.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do you write a Kotlin unit test?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">Add <code>testImplementation(kotlin("test"))</code> to <code>build.gradle.kts</code>. Create a file in <code>src/test/kotlin</code>. Write a class with <code>@Test</code> annotated functions using <code>assertEquals</code>, <code>assertTrue</code>, <code>assertNotNull</code>. Run with <code>./gradlew test</code>. Test classes do not need to extend anything — plain Kotlin classes with <code>@Test</code> functions work.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do you test coroutines in Kotlin?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">Add <code>testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")</code>. Wrap test bodies in <code>runTest { }</code> instead of <code>runBlocking</code>. Use <code>advanceTimeBy()</code> to skip delays. Inject <code>TestDispatcher</code> into your classes. For Flow testing, collect with <code>toList()</code> or use the Turbine library for complex emission sequences.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">JUnit5 vs Kotest for Kotlin — which to choose?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">JUnit5 with kotlin-test is simpler to set up and familiar to Java developers. Kotest offers more expressive styles (BehaviorSpec, DescribeSpec), built-in coroutine support, property-based testing, and richer matchers. Choose JUnit5 for straightforward unit tests and team familiarity; choose Kotest when you want richer test DSL, property testing, or native coroutine integration without extra libraries.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OTHER TOOLS -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">More Tools</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="tools-grid">
+      <a href="kotlin_mock_generator/" class="otl">
+        <p class="otl-eye">mock //</p>
+        <span class="otl-name">Mock Generator</span>
+      </a>
+      <a href="kotlin_test_flow_analyzer/" class="otl">
+        <p class="otl-eye">flow //</p>
+        <span class="otl-name">Flow Test Analyzer</span>
+      </a>
+      <a href="kotlin_unit_test_generator/" class="otl">
+        <p class="otl-eye">unit test //</p>
+        <span class="otl-name">Unit Test Generator</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- TAGS -->
+
+  <div class="tag-cloud">
+    <span class="tag">kotlin test</span>
+    <span class="tag">kotlin testing</span>
+    <span class="tag">kotlin unit testing</span>
+    <span class="tag">kotlin test framework</span>
+    <span class="tag">kotlin unit test</span>
+    <span class="tag">unit test kotlin</span>
+    <span class="tag">test kotlin</span>
+    <span class="tag">kotlin tests</span>
+    <span class="tag">kotlin-test library</span>
+    <span class="tag">kotest kotlin</span>
+    <span class="tag">mockk kotlin</span>
+    <span class="tag">kotlin coroutines test</span>
+    <span class="tag">runTest kotlin</span>
+    <span class="tag">kotlin junit5</span>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p>kotlin-testing-tools &middot; junit5 &middot; kotest &middot; mockk &middot; coroutines</p>
+    <p>free &middot; no install &middot; github pages</p>
+  </div>
+</footer>
+
+<script>
+// ─── TEST GENERATOR ───
+
+function onInputChange() {
+  var code = document.getElementById('kotlinInput').value;
+  var lines = code ? code.split('\n').length : 0;
+  document.getElementById('lineInfo').textContent = lines + ' lines';
+}
+
+function extractFunctions(code) {
+  var fns = [];
+  var re = /(?:fun\s+)(\w+)\s*\(([^)]*)\)\s*(?::\s*[\w<>, ?]+)?\s*[{=]/g;
+  var match;
+  while ((match = re.exec(code)) !== null) {
+    var name = match[1];
+    if (name === 'main' || name.startsWith('test')) continue;
+    var params = match[2].trim();
+    fns.push({ name: name, params: params });
+  }
+  return fns;
+}
+
+function extractClassName(code) {
+  var m = code.match(/class\s+(\w+)/);
+  return m ? m[1] : null;
+}
+
+function isSuspend(code, fnName) {
+  return new RegExp('suspend\\s+fun\\s+' + fnName + '\\s*\\(').test(code);
+}
+
+function generateJUnit5(code, fns, className) {
+  var lines = [];
+  var hasSuspend = fns.some(function(f) { return isSuspend(code, f.name); });
+
+  lines.push('import kotlin.test.*');
+  if (hasSuspend) lines.push('import kotlinx.coroutines.test.runTest');
+  lines.push('');
+  lines.push('class ' + (className ? className + 'Test' : 'MyClassTest') + ' {');
+  lines.push('');
+
+  if (className) {
+    lines.push('    private val sut = ' + className + '()');
+    lines.push('');
+  }
+
+  if (!fns.length) {
+    lines.push('    @Test');
+    lines.push('    fun testExample() {');
+    lines.push('        // TODO: add assertions');
+    lines.push('        assertTrue(true)');
+    lines.push('    }');
+  } else {
+    fns.forEach(function(fn) {
+      var suspend = isSuspend(code, fn.name);
+      lines.push('    @Test');
+      if (suspend) {
+        lines.push('    fun test' + cap(fn.name) + '() = runTest {');
+      } else {
+        lines.push('    fun test' + cap(fn.name) + '() {');
+      }
+      lines.push('        // Arrange');
+      if (fn.params) {
+        fn.params.split(',').forEach(function(p) {
+          var pname = p.trim().split(':')[0].trim();
+          if (pname) lines.push('        val ' + pname + ' = TODO("provide value")');
+        });
+      }
+      lines.push('        // Act');
+      var call = className ? 'sut.' + fn.name : fn.name;
+      var argList = fn.params ? fn.params.split(',').map(function(p) {
+        return p.trim().split(':')[0].trim();
+      }).join(', ') : '';
+      lines.push('        val result = ' + call + '(' + argList + ')');
+      lines.push('        // Assert');
+      lines.push('        assertNotNull(result)');
+      lines.push('    }');
+      lines.push('');
+    });
+  }
+
+  lines.push('}');
+  return lines.join('\n');
+}
+
+function generateKotest(code, fns, className) {
+  var lines = [];
+  var hasSuspend = fns.some(function(f) { return isSuspend(code, f.name); });
+
+  lines.push('import io.kotest.core.spec.style.StringSpec');
+  lines.push('import io.kotest.matchers.shouldBe');
+  lines.push('import io.kotest.matchers.shouldNotBe');
+  if (hasSuspend) lines.push('import kotlinx.coroutines.test.runTest');
+  lines.push('');
+  lines.push('class ' + (className ? className + 'Test' : 'MyClassTest') + ' : StringSpec({');
+  lines.push('');
+
+  if (className) {
+    lines.push('    val sut = ' + className + '()');
+    lines.push('');
+  }
+
+  if (!fns.length) {
+    lines.push('    "should work correctly" {');
+    lines.push('        // TODO: add assertions');
+    lines.push('        true shouldBe true');
+    lines.push('    }');
+  } else {
+    fns.forEach(function(fn) {
+      var suspend = isSuspend(code, fn.name);
+      lines.push('    "' + fn.name + ' should return expected result" ' + (suspend ? 'suspend ' : '') + '{');
+      var call = className ? 'sut.' + fn.name : fn.name;
+      var argList = fn.params ? fn.params.split(',').map(function(p) {
+        return 'TODO("value")';
+      }).join(', ') : '';
+      lines.push('        val result = ' + call + '(' + argList + ')');
+      lines.push('        result shouldNotBe null');
+      lines.push('    }');
+      lines.push('');
+    });
+  }
+
+  lines.push('})');
+  return lines.join('\n');
+}
+
+function generateMockK(code, fns, className) {
+  var lines = [];
+  var hasSuspend = fns.some(function(f) { return isSuspend(code, f.name); });
+
+  lines.push('import io.mockk.*');
+  lines.push('import kotlin.test.*');
+  if (hasSuspend) lines.push('import kotlinx.coroutines.test.runTest');
+  lines.push('');
+  lines.push('class ' + (className ? className + 'Test' : 'MyClassTest') + ' {');
+  lines.push('');
+  lines.push('    // TODO: replace with actual dependency type');
+  lines.push('    private val dependency = mockk<Any>()');
+  if (className) {
+    lines.push('    private val sut = ' + className + '(dependency)');
+  }
+  lines.push('');
+
+  if (!fns.length) {
+    lines.push('    @Test');
+    lines.push('    fun testExample() {');
+    lines.push('        every { dependency.toString() } returns "mocked"');
+    lines.push('        // TODO: add assertions');
+    lines.push('    }');
+  } else {
+    fns.forEach(function(fn) {
+      var suspend = isSuspend(code, fn.name);
+      lines.push('    @Test');
+      if (suspend) {
+        lines.push('    fun test' + cap(fn.name) + '() = runTest {');
+        lines.push('        coEvery { dependency.toString() } returns "mocked"');
+      } else {
+        lines.push('    fun test' + cap(fn.name) + '() {');
+        lines.push('        every { dependency.toString() } returns "mocked"');
+      }
+      var call = className ? 'sut.' + fn.name : fn.name;
+      var argList = fn.params ? fn.params.split(',').map(function(p) {
+        return 'TODO("value")';
+      }).join(', ') : '';
+      lines.push('        val result = ' + call + '(' + argList + ')');
+      lines.push('        assertNotNull(result)');
+      if (suspend) {
+        lines.push('        coVerify { dependency.toString() }');
+      } else {
+        lines.push('        verify { dependency.toString() }');
+      }
+      lines.push('    }');
+      lines.push('');
+    });
+  }
+
+  lines.push('}');
+  return lines.join('\n');
+}
+
+function cap(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function generateTest() {
+  var code = document.getElementById('kotlinInput').value.trim();
+  var framework = document.getElementById('frameworkSelect').value;
+  var out = document.getElementById('outputArea');
+
+  if (!code) {
+    out.textContent = '// Paste Kotlin code first.';
+    return;
+  }
+
+  var fns = extractFunctions(code);
+  var className = extractClassName(code);
+  var result = '';
+
+  if (framework === 'junit5') result = generateJUnit5(code, fns, className);
+  else if (framework === 'kotest') result = generateKotest(code, fns, className);
+  else result = generateMockK(code, fns, className);
+
+  out.textContent = result;
+}
+
+function copyOutput() {
+  var text = document.getElementById('outputArea').textContent;
+  if (!text) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() { showCopy(); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showCopy();
+  }
+}
+
+function showCopy() {
+  var fb = document.getElementById('copyFb');
+  fb.style.display = 'inline';
+  setTimeout(function() { fb.style.display = 'none'; }, 2000);
+}
+
+function loadSample() {
+  var nl = '\n';
+  var sample = [
+    'class UserService(private val repository: UserRepository) {',
+    '',
+    '    fun getUserById(id: Int): User? {',
+    '        if (id <= 0) return null',
+    '        return repository.findById(id)',
+    '    }',
+    '',
+    '    suspend fun fetchUserAsync(id: Int): User {',
+    '        return repository.fetchFromApi(id)',
+    '    }',
+    '',
+    '    fun validateEmail(email: String): Boolean {',
+    '        return email.contains("@") && email.contains(".")',
+    '    }',
+    '}'
+  ].join(nl);
+  document.getElementById('kotlinInput').value = sample;
+  onInputChange();
+  generateTest();
+}
+
+function clearGen() {
+  document.getElementById('kotlinInput').value = '';
+  document.getElementById('lineInfo').textContent = '0 lines';
+  document.getElementById('outputArea').textContent = '// Generated test will appear here.\n// Paste a Kotlin class and click Generate.';
+}
+
+function toggleFaq(btn) {
+  btn.parentElement.classList.toggle('open');
+}
+</script>
 
 </body>
 </html>
