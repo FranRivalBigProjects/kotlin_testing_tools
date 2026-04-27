@@ -778,13 +778,8 @@ footer p { font-family: var(--mono); font-size: 11px; color: var(--text-dim); ma
         <span>// Paste Kotlin class or function</span>
         <span id="lineInfo">0 lines</span>
       </div>
-      <textarea class="kotlin-textarea" id="kotlinInput" oninput="onInputChange()" spellcheck="false" placeholder="// Paste a Kotlin class or function here...
-
-
-// The generator will produce a JUnit5 + kotlin-test
-// unit test skeleton from your code.”></textarea>
-</div>
-
+      <textarea class="kotlin-textarea" id="kotlinInput" oninput="onInputChange()" spellcheck="false" placeholder="// Paste a Kotlin class or function here..."></textarea>
+    </div>
 
     <div class="gen-right">
       <div class="gen-options">
@@ -798,13 +793,9 @@ footer p { font-family: var(--mono); font-size: 11px; color: var(--text-dim); ma
       <div class="panel-head">
         <span>// Generated test</span>
       </div>
-      <pre id="outputArea">// Generated test will appear here.
-
-
-// Paste a Kotlin class and click Generate.</pre>
-</div>
-</div>
-
+      <pre id="outputArea"></pre>
+    </div>
+  </div>
 
   <div class="gen-bar">
     <button class="btn-generate" onclick="generateTest()">Generate Test</button>
@@ -906,6 +897,7 @@ footer p { font-family: var(--mono); font-size: 11px; color: var(--text-dim); ma
     <div class="cmp-cell">N/A</div>
   </div>
 </div>
+
 
   </section>
 
@@ -1102,6 +1094,10 @@ called = <span class="cs">true</span>
 
 <script>
 // ─── TEST GENERATOR ───
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('outputArea').textContent = '// Generated test will appear here.\n// Paste a Kotlin class and click Generate.';
+});
 
 function onInputChange() {
   var code = document.getElementById('kotlinInput').value;
